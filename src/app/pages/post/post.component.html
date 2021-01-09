@@ -1,0 +1,65 @@
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <span class="navbar-brand"> New Post </span>
+        </div>
+        <div class="collapse navbar-collapse">
+            <div class="nav navbar-nav">
+                <a class="navbar-text" routerLink="/"> Back to home </a>
+            </div>
+            <div class="nav navbar-nav navbar-right">
+                <div *ngIf="isLoggedIn$ | async">
+                    <p class="navbar-text">Welcome, {{ (user$ | async)?.name }}</p>
+                </div>
+                <div></div>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <form [formGroup]="postForm" (ngSubmit)="onSubmit()">
+                <div class="form-group">
+                    <label for="name">Title</label>
+                    <input
+                        type="text"
+                        class="form-control"
+                        id="title"
+                        formControlName="title"
+                        placeholder="title"
+                        maxlength="200"
+                    />
+                    <div class="text-right">{{ title.value.length }} / 200</div>
+                    <div *ngIf="title.invalid && (title.dirty || title.touched)" class="text-danger text-right">
+                        <p *ngIf="title.errors.required">Title is required</p>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="message">Message</label>
+                    <textarea
+                        placeholder="Message"
+                        id="message"
+                        class="form-control"
+                        formControlName="body"
+                        maxlength="2000"
+                        rows="4"
+                    >
+                    </textarea>
+                    <div class="text-right">{{ message.value.length }} / 2000</div>
+                    <div *ngIf="message.invalid && (message.dirty || message.touched)" class="text-danger text-right">
+                        <p *ngIf="message.errors.required">Message is required</p>
+                    </div>
+                </div>
+                <div>
+                    <button type="button" class="btn btn-default" (click)="deletePost()">Delete</button>
+                    <button type="submit" class="btn btn-primary pull-right" [disabled]="saveDisabled">Save</button>
+                    <button type="button" class="btn btn-default pull-right
+                    mr-3" routerLink="/">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

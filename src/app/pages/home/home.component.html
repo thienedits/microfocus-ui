@@ -1,0 +1,117 @@
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <span class="navbar-brand"> Home </span>
+        </div>
+        <div class="collapse navbar-collapse">
+            <div class="nav navbar-nav navbar-right">
+                <div *ngIf="isLoggedIn$ | async">
+                    <button [routerLink]="['/post', 0]" type="button" class="btn btn-primary navbar-btn mr-3">
+                        New Post
+                    </button>
+                    <button type="button" class="btn btn-default navbar-btn" (click)="logout()">Log out</button>
+                    <p class="navbar-text">Welcome, {{ (user$ | async)?.name }}</p>
+                </div>
+                <div *ngIf="!(isLoggedIn$ | async)">
+                    <button routerLink="/login" type="button" class="btn btn-primary navbar-btn">Log in</button>
+                    <p class="navbar-text">You are not logged in</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="row">
+        <div [ngSwitch]="postAction$ | async" class="col-md-12">
+            <div *ngSwitchCase="'new'" class="alert alert-success alert-dismissible" role="alert">
+                <button
+                    type="button"
+                    class="close"
+                    data-dismiss="alert"
+                    aria-label="Close"
+                    (click)="dismissPostAction()"
+                >
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <span> A new post was successfully saved </span>
+            </div>
+            <div *ngSwitchCase="'update'" class="alert alert-success alert-dismissible" role="alert">
+                <button
+                    type="button"
+                    class="close"
+                    data-dismiss="alert"
+                    aria-label="Close"
+                    (click)="dismissPostAction()"
+                >
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <span> The post was successfully saved </span>
+            </div>
+            <div *ngSwitchCase="'delete'" class="alert alert-success alert-dismissible" role="alert">
+                <button
+                    type="button"
+                    class="close"
+                    data-dismiss="alert"
+                    aria-label="Close"
+                    (click)="dismissPostAction()"
+                >
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <span> The post was successfully deleted </span>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <span class="pull-right">
+                Page {{pageIndex + 1}} of {{lastPage + 1}}
+            </span>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Post</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let post of posts$ | async; let i = index">
+                            <td *ngIf="post.user; let user">
+                                <div>{{ user.name }}</div>
+                                <div>
+                                    <a [href]="formatAbsoluteUrl(user.website)" target="_blank">{{
+                                        user.company.name
+                                    }}</a>
+                                </div>
+                            </td>
+                            <td>
+                                <h4>
+                                    <a *ngIf="isLoggedIn$ | async" [routerLink]="['/post', post.id]">{{
+                                        post.title
+                                    }}</a>
+                                    <span *ngIf="!(isLoggedIn$ | async)">{{ post.title }}</span>
+                                </h4>
+                                <p>{{ post.body }}</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <nav class="pull-right" aria-label="...">
+                <ul class="pager">
+                    <li class="mr-3" [class.disabled]="pageIndex == 0"><a href="#" (click)="prev()">Previous</a></li>
+                    <li [class.disabled]="pageIndex == lastPage"><a href="#" (click)="next()">Next</a></li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
